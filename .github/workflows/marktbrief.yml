@@ -1,0 +1,81 @@
+name: Dagelijkse Marktbrief
+on: [push]
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stuur Ochtend Marktbrief via Telegram
+        env:
+          TG_TOKEN: "8695038106:AAGeu_iNW4AkgkiO0lDFZasUcOycxHrsk34"
+          TG_CHAT: "951525403"
+        run: |
+          send() {
+            local TEXT="$1"
+            curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
+              --data-urlencode "chat_id=${TG_CHAT}" \
+              --data-urlencode "text=${TEXT}" \
+              -d "parse_mode=HTML"
+            sleep 1
+          }
+
+          HEADER="🇳🇱 <b>OCHTEND MARKTBRIEF — 28 APRIL 2026</b>
+⏰ 09:14 AMS | Europese markt geopend"
+
+          send "$HEADER"
+
+          BRIEF1="<b>INDICES</b>
+• AEX: 1.021,26 (-0,28%)
+• S&amp;P 500 (gisteren): 7.173,91 (+0,12%) ↗ record
+• Nasdaq (gisteren): 24.887,10 (+0,20%) ↗ record
+• Dow Jones (gisteren): 49.167,79 (-0,13%)
+
+<b>GROOTSTE MOVERS</b>
+Stijgers: Nasdaq +0,20% | S&amp;P 500 +0,12% | AMZN stabiel
+Dalers: BESI -1,12% | ASM -0,99% | NFLX -0,41%
+
+<b>HOOG VOLUME (&gt;1,5x gemiddeld)</b>
+📈 SNDK — Sterkste performer S&amp;P 500 2026 (+317% YTD), vandaag -5,67% pullback → verhoogd volume verwacht
+
+<b>POTENTIELE KANSEN</b>
+• SNDK $890,89: Pullback -5,67% na +317% YTD rally. Instapkans bij steun ~$850
+• MSFT $425,47: Resultaten 29 april (morgen) → pre-earnings setup. 52wk high $555
+• UBER $76: Pre-earnings 6 mei, 52wk high $101,99 → 25% onder piek
+• AEX 1.021,26: Houdt 1.000-niveau vast bij lichte correctie"
+
+          send "$BRIEF1"
+
+          BRIEF2="<b>MARKTCONTEXT</b>
+🥇 Goud: ~$4.700/oz — stabiel na -2,5% vorige week
+🥈 Zilver (SLV): +11% YTD — outperformt goud
+⛽ Nat. Gas (NG): $2,505/MMBtu (-3,6%) — laagste sd okt 2024, mild voorjaarsweer
+🛢 Ruwe Olie: $128,24 (+97% j-o-j) — Midden-Oosten conflictpremie
+😰 VIX: 17,88 — normaal regime (15-25)
+📊 Macro: VS-beurzen op recordstand | Iran-vredesonderhandelingen stagneren | Mag-7 earnings week"
+
+          send "$BRIEF2"
+
+          BRIEF3="<b>VOLLEDIG PORTFOLIO</b>
+<code>
+Sym.      Prijs      %
+BESI.AS   €247,80  -1,12%
+ASM.AS    €780,00  -0,99%
+HEIJM.AS  €10,32      —
+SHELL.AS  €38,13      —
+AEX       1021,26  -0,28%
+SLV          —    +11%YTD
+IAU          —    stabiel
+NG=F      $2,505   -3,60%
+UNG          —       —
+USO       $128,24  +97%joj
+AVGO      $416,72     —
+MU        $525,50     —
+LMT       $658,08     —
+SNDK      $890,89  -5,67%
+RDDT      $157,00     —
+NFLX       $92,44  -0,41%
+MSFT      $425,47     —
+AMZN      $262,73     —
+UBER       $76,00     —
+</code>"
+
+          send "$BRIEF3"
