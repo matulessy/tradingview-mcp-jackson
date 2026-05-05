@@ -1,0 +1,87 @@
+name: Send Telegram Marktbrief
+on: push
+
+jobs:
+  send-brief:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stuur Ochtend Marktbrief via Telegram
+        run: |
+          python3 - << 'PYEOF'
+          import urllib.request, urllib.parse, json
+
+          TOKEN = "8695038106:AAGeu_iNW4AkgkiO0lDFZasUcOycxHrsk34"
+          CHAT_ID = "951525403"
+
+          def send(text):
+              url = "https://api.telegram.org/bot" + TOKEN + "/sendMessage"
+              data = urllib.parse.urlencode({
+                  "chat_id": CHAT_ID,
+                  "text": text,
+                  "parse_mode": "HTML"
+              }).encode()
+              req = urllib.request.Request(url, data=data, method="POST")
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  resp = json.loads(r.read())
+                  print("OK:", resp.get("ok"), "msg_id:", resp.get("result",{}).get("message_id"))
+
+          header = (
+              "\U0001f4ca <b>OCHTEND MARKTBRIEF — 05 MEI 2026 — 09:12 AMS</b>\n\n"
+              "AEX: 1.021,26 (-0,28%) | S&amp;P 500 (gisteren): 6.966,28 (+0,93%)\n"
+              "Nasdaq: 23.671,35 (+1,18%) | Dow: 49.504,07 (+1,08%)\n"
+              "VIX: 14,49 — LAAG (&lt;15) — risico-aan sfeer"
+          )
+
+          detail = (
+              "<b>OCHTEND MARKTBRIEF — 05 MEI 2026</b>\n\n"
+              "<b>INDICES</b>\n"
+              "• AEX: 1.021,26 (-0,28%)\n"
+              "• S&amp;P 500 (gisteren): 6.966,28 (+0,93%)\n"
+              "• Nasdaq (gisteren): 23.671,35 (+1,18%)\n\n"
+              "<b>GROOTSTE MOVERS</b>\n"
+              "Stijgers: MU +4,80% | MSFT +1,62% | LMT +1,50%\n"
+              "Dalers:   IAU -2,02% | SLV -1,47% | AEX -0,28%\n\n"
+              "<b>HOOG VOLUME (&gt;1.5x)</b>\n"
+              "SNDK, MU, RDDT (sterk nieuws-gedreven volume)\n\n"
+              "<b>POTENTIELE KANSEN</b>\n"
+              "• SNDK: all-time high $1.189 (+331% YTD!) — explosief momentum\n"
+              "• RDDT: Q1 omzet +69% j/j, koers $167,54 — analistdoel $230\n"
+              "• MU: +4,80%, tech-sector sterk\n\n"
+              "<b>MARKTCONTEXT</b>\n"
+              "Goud: $4.564/oz | IAU ETF: $84,97 (-2,02%)\n"
+              "Zilver: &gt;$75/oz | SLV ETF: $67,29 (-1,47%)\n"
+              "Aardgas: $2,83/MMBtu (-1,23%) | Olie (USO): $146,97\n"
+              "VIX 14,49 — laag, risico-aan sfeer\n\n"
+              "<b>VOLLEDIG PORTFOLIO</b>\n"
+              "<code>"
+              "Symbool  | Prijs      | %\n"
+              "BESI.AS  | ~€257      | ATH 24/4\n"
+              "AEX      | 1.021,26   | -0,28%\n"
+              "ASM.AS   | ~€795      | ATH 17/4\n"
+              "HEIJM.AS | ~€83,45    | +7,33%\n"
+              "SHELL.AS | €38,51     | n.v.t.\n"
+              "SLV      | $67,29     | -1,47%\n"
+              "IAU      | $84,97     | -2,02%\n"
+              "NG=F     | $2,83      | -1,23%\n"
+              "USO      | $146,97    | n.v.t.\n"
+              "AVGO     | $421,09    | +0,88%\n"
+              "MU       | $541,99    | +4,80%\n"
+              "LMT      | $518,15    | +1,50%\n"
+              "SNDK     | $1.189     | ATH(!)\n"
+              "RDDT     | $167,54    | +0,63%\n"
+              "NFLX     | $91,98*    | -1,74%\n"
+              "MSFT     | $414,40    | +1,62%\n"
+              "AMZN     | $268,36    | +1,25%\n"
+              "UBER     | $75,04     | +0,68%\n"
+              "GSPC     | 6.966,28   | +0,93%\n"
+              "IXIC     | 23.671,35  | +1,18%\n"
+              "DJI      | 49.504,07  | +1,08%\n"
+              "VIX      | 14,49      | -2,75%"
+              "</code>\n"
+              "<i>*via zoekresultaten — verificeer bij twijfel</i>"
+          )
+
+          send(header)
+          send(detail)
+          print("Klaar!")
+          PYEOF
